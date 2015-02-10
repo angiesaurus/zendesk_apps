@@ -17,7 +17,7 @@ def make_request():
         access_token = request.get_cookie('owat')
         bearer_token = 'Bearer ' + access_token
         header = {'Authorization': bearer_token}
-        url = 'https://catzomg.zendesk.com/api/v2/users/me.json'
+        url = 'https://{name}.zendesk.com/api/v2/users/me.json'
         r = requests.get(url, headers=header)
         if r.status_code != 200:
             error_msg = 'Failed to get data with error {}'.format(r.status_code)
@@ -33,9 +33,9 @@ def make_request():
         parameters = {
             'response_type': 'code',
             'redirect_uri': 'http://localhost:8080/handle_user_decision',
-            'client_id': 'catzomg',
+            'client_id': '{id}',
             'scope': 'read write'}
-        url = 'https://catzomg.zendesk.com/oauth/authorizations/new?' + urlencode(parameters)
+        url = 'https://{name}.zendesk.com/oauth/authorizations/new?' + urlencode(parameters)
         redirect(url)
 
 
@@ -48,13 +48,13 @@ def handle_decision():
         parameters = {
             'grant_type': 'authorization_code',
             'code': request.query.code,
-            'client_id': 'catzomg',
-            'client_secret': 'a3915db534549f6aec55cfbc83fadce033d1fdc3def084399a06951b60a37312',
+            'client_id': '{id}',
+            'client_secret': '{secret}',
             'redirect_uri': 'http://localhost:8080/handle_user_decision',
             'scope': 'read'}
         payload = json.dumps(parameters)
         header = {'Content-Type': 'application/json'}
-        url = 'https://catzomg.zendesk.com/oauth/tokens'
+        url = 'https://{name}.zendesk.com/oauth/tokens'
         r = requests.post(url, data=payload, headers=header)
         if r.status_code != 200:
             error_msg = 'Failed to get access token with error {}'.format(r.status_code)
